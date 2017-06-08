@@ -1,6 +1,5 @@
 #pragma once
-#include <diesel.h>
-
+#include "example\diesel.h"
 //#define DS_IMGUI_IMPLEMENTATION
 
 namespace gui {
@@ -14,7 +13,9 @@ namespace gui {
 		ds::Color disabledBoxColor;
 		ds::Color activeInputBoxColor;
 		ds::Color inputBoxColor;
+		ds::Color boxBackgroundColor;
 		ds::Color boxSelectionColor;
+		ds::Color sliderColor;
 		float lineSpacing;
 	};
 
@@ -105,7 +106,7 @@ namespace gui {
 }
 
 #ifdef DS_IMGUI_IMPLEMENTATION
-#include "..\src\utils\SpriteBatchBuffer.h"
+#include "example\SpriteBatchBuffer.h"
 #include <string.h>
 #include <stdarg.h>
 
@@ -272,7 +273,7 @@ namespace gui {
 	};
 	
 	static const IMGUISettings DEFAULT_SETTINGS = {
-		ds::Color(160, 0, 0, 255), // header
+		ds::Color(40,117,114, 255), // header
 		ds::Color(51, 51, 51, 255), // button
 		ds::Color(16, 16, 16, 255), // background
 		ds::Color(32, 32, 32, 255), // label 
@@ -280,7 +281,9 @@ namespace gui {
 		ds::Color(192, 0, 0, 255), // disabled
 		ds::Color(64,64,64,255), // active input
 		ds::Color(32,32,32,255), // input
-		ds::Color(0,0,192,255), // box selection color
+		ds::Color(38,38,38,255), // box background color
+		ds::Color(167,77,75,255), // box selection color
+		ds::Color(96,96,96,255), // slider color
 		5.0f // line spacing
 	};
 
@@ -742,12 +745,11 @@ namespace gui {
 		pos = _guiCtx->currentPos;
 		pos.x -= 10.0f;
 		addBox(pos, 20, 20, _guiCtx->settings.buttonColor);
-		pos.x += 4.0f;
 		if (*state == 0) {
-			addBox(pos, 10, 10, _guiCtx->settings.disabledBoxColor);
+			addText(pos, "+");
 		}
 		else {
-			addBox(pos, 10, 10, _guiCtx->settings.enabledBoxColor);
+			addText(pos, "-");
 		}
 		if (isClicked(_guiCtx->currentPos, ds::vec2(20, 20))) {
 			if (*state == 0) {
@@ -1062,9 +1064,9 @@ namespace gui {
 		sprintf_s(_guiCtx->tmpBuffer, 256, "%d", *v);
 		ds::vec2 textDim = textSize(_guiCtx->tmpBuffer);
 		p = _guiCtx->currentPos;
-		p.x += 30.0f;
-		addBox(p, ds::vec2(90, 20), _guiCtx->settings.buttonColor);
-		p.x += (90.0f - textDim.x) * 0.5f;
+		p.x += 20.0f;
+		addBox(p, ds::vec2(110, 20), _guiCtx->settings.labelBoxColor);
+		p.x += (110.0f - textDim.x) * 0.5f;
 		addText(p, _guiCtx->tmpBuffer);
 		// +
 		p = _guiCtx->currentPos;
@@ -1090,7 +1092,7 @@ namespace gui {
 	void Slider(const char* label, int* v, int minValue, int maxValue, float width) {
 		HashedId id = HashPointer(v);
 		ds::vec2 p = _guiCtx->currentPos;
-		addBox(_guiCtx->currentPos, ds::vec2(width, 20.0f), _guiCtx->settings.buttonColor);
+		addBox(_guiCtx->currentPos, ds::vec2(width, 20.0f), _guiCtx->settings.labelBoxColor);
 		// calculate offset
 		int d = maxValue - minValue;
 		if (isClicked(p, ds::vec2(width, 20.0f))) {
@@ -1110,7 +1112,7 @@ namespace gui {
 			*v = maxValue;
 		}
 		p.x += static_cast<float>(*v) / static_cast<float>(d) * width;
-		addBox(p, ds::vec2(8.0f, 28.0f), ds::Color(31, 31, 31, 255));
+		addBox(p, ds::vec2(8.0f, 28.0f), _guiCtx->settings.sliderColor);
 		p = _guiCtx->currentPos;
 		sprintf_s(_guiCtx->tmpBuffer, 256, "%d", *v);
 		ds::vec2 textDim = textSize(_guiCtx->tmpBuffer);
@@ -1153,7 +1155,7 @@ namespace gui {
 			*v = roundf(*v * prec) / prec;
 		}
 		p.x += *v / d * width;
-		addBox(p, ds::vec2(8.0f, 28.0f), ds::Color(31, 31, 31, 255));
+		addBox(p, ds::vec2(8.0f, 28.0f), _guiCtx->settings.sliderColor);
 		p = _guiCtx->currentPos;
 		sprintf_s(_guiCtx->tmpBuffer, 256, "%g", *v);
 		ds::vec2 textDim = textSize(_guiCtx->tmpBuffer);
@@ -1346,7 +1348,7 @@ namespace gui {
 		float height = max * 20.0f;
 		p.y -= height * 0.5f - 10.0f;
 		// background
-		addBox(p, ds::vec2(width + 20.0f, height), ds::Color(32, 32, 32, 255));
+		addBox(p, ds::vec2(width + 20.0f, height), _guiCtx->settings.boxBackgroundColor);
 		if (size > max) {
 			// up
 			p = _guiCtx->currentPos;
@@ -1362,7 +1364,7 @@ namespace gui {
 			float sideHeight = height - 2.0f * 20.0f;
 			p.y -= sideHeight * 0.5f;
 			p.y -= 20.0f * 0.5f;
-			addBox(p, ds::vec2(20.0f, sideHeight), ds::Color(38, 38, 38, 255));
+			addBox(p, ds::vec2(20.0f, sideHeight), ds::Color(20, 20, 20, 255));
 			// down
 			p.y = _guiCtx->currentPos.y - (max - 1) * 20.0f;
 			addBox(p, 20, 20, _guiCtx->settings.buttonColor);
@@ -1394,7 +1396,7 @@ namespace gui {
 				*selected = i;
 			}
 			if (*selected == i) {
-				addBox(p, ds::vec2(width, 20.0f), ds::Color(192, 0, 0, 255));
+				addBox(p, ds::vec2(width, 20.0f), _guiCtx->settings.boxSelectionColor);
 			}
 			addText(p, entries[i]);
 			p.y -= 20.0f;

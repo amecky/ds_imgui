@@ -1,5 +1,5 @@
 #pragma once
-#include "example\diesel.h"
+#include <diesel.h>
 //#define DS_IMGUI_IMPLEMENTATION
 
 namespace gui {
@@ -106,7 +106,7 @@ namespace gui {
 }
 
 #ifdef DS_IMGUI_IMPLEMENTATION
-#include "example\SpriteBatchBuffer.h"
+#include <SpriteBatchBuffer.h>
 #include <string.h>
 #include <stdarg.h>
 
@@ -751,7 +751,7 @@ namespace gui {
 		else {
 			addText(pos, "-");
 		}
-		if (isClicked(_guiCtx->currentPos, ds::vec2(20, 20))) {
+		if (isClicked(pos, ds::vec2(20, 20))) {
 			if (*state == 0) {
 				*state = 1;
 			}
@@ -1432,8 +1432,16 @@ namespace gui {
 		else {
 			addText(p, "{Select entry}");
 		}
-		p.x += 200.0f;
+		p.x += 180.0f;
+		addBox(p, 20, 20, _guiCtx->settings.buttonColor);
+		addText(p, "x");
+		if (isBoxSelected(id, p, ds::vec2(20.0f, 20.0f))) {
+			*selected = -1;
+		}
+		
+		p.x += 30.0f;
 		addText(p, label);
+		
 		moveForward(ds::vec2(300.0f, 20.0f));
 		if (*state == 1) {
 			prepareComboBox(id, offset, num, max);

@@ -274,7 +274,7 @@ namespace gui {
 	
 	static const IMGUISettings DEFAULT_SETTINGS = {
 		ds::Color(40,117,114, 255), // header
-		ds::Color(51, 51, 51, 255), // button
+		ds::Color(68, 68, 68, 255), // button
 		ds::Color(16, 16, 16, 255), // background
 		ds::Color(32, 32, 32, 255), // label 
 		ds::Color(0, 192, 0, 255), // enabled
@@ -650,14 +650,14 @@ namespace gui {
 			//cp.x = _guiCtx->currentPos.x + 2.0f+ (width + 10.0f) * index + cursorPos.x + guiContext->settings[GS_LABELSIZE];
 			//guiContext->addBox(cp, ds::vec2(2, BOX_HEIGHT - 4.0f), ds::Color(192, 0, 0, 255));
 			p.y -= 1.0f;
-			addText(p, _guiCtx->inputText);
+			addText(p, _guiCtx->inputText, 0.0f);
 			sprintf_s(v, maxLength, "%s", _guiCtx->inputText);
 		}
 		else {
 			sprintf_s(_guiCtx->tmpBuffer, 64, "%s", v);
 			addBox(p, ds::vec2(150.0f, 20.0f), ds::Color(192, 0, 0, 255));
 			p.y -= 1.0f;
-			addText(p, _guiCtx->tmpBuffer);
+			addText(p, _guiCtx->tmpBuffer, 0.0f);
 		}
 		return ret;
 	}
@@ -679,7 +679,7 @@ namespace gui {
 			_guiCtx->active = new_id;
 		}
 		if (_guiCtx->active == new_id) {
-			addBox(p, width, 20,_guiCtx->settings.activeInputBoxColor);
+			addBox(p, width, 16,_guiCtx->settings.activeInputBoxColor);
 			ret = handleTextInput(true);
 			*v = static_cast<float>(atof(_guiCtx->inputText));
 			ds::vec2 cp = p;
@@ -687,15 +687,15 @@ namespace gui {
 			cp.x = _guiCtx->currentPos.x + 2.0f + (width + 10.0f) * index + cursorPos.x + 10.0f;
 			addBox(cp, ds::vec2(2, 30.0f - 4.0f), ds::Color(192, 0, 192, 255));
 			p.y -= 1.0f;
-			addText(p, _guiCtx->inputText);
+			addText(p, _guiCtx->inputText, 0.0f);
 		}
 		else {
 			sprintf_s(_guiCtx->tmpBuffer, 64, format, *v);
 			ds::vec2 textDim = textSize(_guiCtx->tmpBuffer);
-			addBox(p, width, 20, _guiCtx->settings.inputBoxColor);
+			addBox(p, width, 16, _guiCtx->settings.inputBoxColor);
 			p.y -= 1.0f;
 			p.x += (width - textDim.x) * 0.5f;
-			addText(p, _guiCtx->tmpBuffer);
+			addText(p, _guiCtx->tmpBuffer, 0.0f);
 		}
 		return ret;
 	}
@@ -783,11 +783,11 @@ namespace gui {
 	// --------------------------------------------------------
 	bool Button(const char* text) {
 		ds::vec2 p = _guiCtx->currentPos;
-		addBox(p, 150, 24, _guiCtx->settings.buttonColor);
-		ds::vec2 dim = ds::vec2(150, 24);
+		addBox(p, 150, 20, _guiCtx->settings.buttonColor);
+		ds::vec2 dim = ds::vec2(150, 20);
 		ds::vec2 textDim = textSize(text);
 		p.x += (150.0f - textDim.x) * 0.5f;
-		addText(p, text);
+		addText(p, text, 0.0f);
 		dim.y = 30.0f;
 		moveForward(dim);
 		return isClicked(_guiCtx->currentPos, dim);
@@ -798,21 +798,21 @@ namespace gui {
 	// --------------------------------------------------------
 	void Checkbox(const char* label, bool* state) {
 		ds::vec2 p = _guiCtx->currentPos;
-		addBox(p, ds::vec2(20, 20),_guiCtx->settings.buttonColor);
-		p.x += 5;
+		addBox(p, ds::vec2(16, 16),_guiCtx->settings.buttonColor);
+		p.x += 4;
 		if (*state) {			
-			addBox(p, 10, 10, _guiCtx->settings.enabledBoxColor);
+			addBox(p, 8, 8, _guiCtx->settings.enabledBoxColor);
 		}
 		else {
-			addBox(p, 10, 10, _guiCtx->settings.disabledBoxColor);
+			addBox(p, 8, 8, _guiCtx->settings.disabledBoxColor);
 		}
-		if (isClicked(_guiCtx->currentPos, ds::vec2(20, 20))) {
+		if (isClicked(_guiCtx->currentPos, ds::vec2(16, 16))) {
 			*state = !*state;
 		}
 		p = _guiCtx->currentPos;
 		p.x += 20.0f;
 		addText(p, label);
-		float advance = 20.0f + _guiCtx->settings.lineSpacing;
+		float advance = 16.0f + _guiCtx->settings.lineSpacing;
 		moveForward(ds::vec2(40.0f, advance));
 	}
 
@@ -935,7 +935,7 @@ namespace gui {
 		p.x += 160.0f;
 		addText(p, label);
 		bool ret = InputScalar(id, 0, str, maxLength, 150.0f);
-		moveForward(ds::vec2(150.0f, 30.0f));
+		moveForward(ds::vec2(150.0f, 22.0f));
 		return ret;
 	}
 
@@ -951,7 +951,7 @@ namespace gui {
 		bool ret = InputScalar(id, 0, &f, "%.0f", 150.0f);
 		*v = static_cast<int>(f);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -964,7 +964,7 @@ namespace gui {
 		addText(p, label);
 		bool ret = InputScalar(id, 0, v, "%g", 150.0f);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -978,7 +978,7 @@ namespace gui {
 		InputScalar(id, 0, &v->x, "%g", 70.0f);
 		bool ret = InputScalar(id, 1, &v->y, "%g", 70.0f);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -993,7 +993,7 @@ namespace gui {
 		InputScalar(id, 1, &v->y, "%g", 70.0f);
 		InputScalar(id, 2, &v->z, "%g", 70.0f);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -1002,14 +1002,14 @@ namespace gui {
 	void Input(const char* label, ds::vec4* v) {
 		HashedId id = HashPointer(v);
 		ds::vec2 p = _guiCtx->currentPos;
-		p.x += 240.0f;
+		p.x += 320.0f;
 		addText(p, label);
 		InputScalar(id, 0, &v->x, "%g", 70.0f);
 		InputScalar(id, 1, &v->y, "%g", 70.0f);
 		InputScalar(id, 2, &v->z, "%g", 70.0f);
 		InputScalar(id, 3, &v->w, "%g", 70.0f);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -1032,7 +1032,7 @@ namespace gui {
 		p.x = _guiCtx->currentPos.x + 350.0f;
 		addText(p, label);
 		ds::vec2 ts = textSize(label);
-		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 30.0f));
+		moveForward(ds::vec2(150.0f + ts.x + 10.0f, 22.0f));
 	}
 
 	// -------------------------------------------------------
@@ -1401,7 +1401,7 @@ namespace gui {
 			addText(p, entries[i]);
 			p.y -= 20.0f;
 		}
-		moveForward(ds::vec2(width, height + 10.0f));
+		moveForward(ds::vec2(width, height + 4.0f));
 	}
 
 	// -------------------------------------------------------
@@ -1470,10 +1470,10 @@ namespace gui {
 				addText(p, entries[i]);
 				p.y -= 20.0f;
 			}
-			moveForward(ds::vec2(width, height + 10.0f));
+			moveForward(ds::vec2(width, height + 4.0f));
 		}
 		else {
-			moveForward(ds::vec2(300.0f, 10.0f));
+			moveForward(ds::vec2(300.0f, 4.0f));
 		}
 
 	}

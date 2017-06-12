@@ -16,6 +16,7 @@ namespace gui {
 		ds::Color boxBackgroundColor;
 		ds::Color boxSelectionColor;
 		ds::Color sliderColor;
+		ds::Color scrollSliderColor;
 		float lineSpacing;
 	};
 
@@ -284,6 +285,7 @@ namespace gui {
 		ds::Color(38,38,38,255), // box background color
 		ds::Color(167,77,75,255), // box selection color
 		ds::Color(96,96,96,255), // slider color
+		ds::Color(255,0,255,255), // scroll slider color
 		5.0f // line spacing
 	};
 
@@ -1364,7 +1366,9 @@ namespace gui {
 			float sideHeight = height - 2.0f * 20.0f;
 			p.y -= sideHeight * 0.5f;
 			p.y -= 20.0f * 0.5f;
+			float cy = p.y;
 			addBox(p, ds::vec2(20.0f, sideHeight), ds::Color(20, 20, 20, 255));
+
 			// down
 			p.y = _guiCtx->currentPos.y - (max - 1) * 20.0f;
 			addBox(p, 20, 20, _guiCtx->settings.buttonColor);
@@ -1374,6 +1378,12 @@ namespace gui {
 					*offset += 1;
 				}
 			}
+
+			float d = 1.0f - static_cast<float>(*offset) / static_cast<float>(max);
+			float dy = d * (sideHeight) - 20.0f;
+			p.y = cy + dy;
+			addBox(p, ds::vec2(20.0f, 6.0f), _guiCtx->settings.scrollSliderColor);
+			
 		}
 	}
 	// -------------------------------------------------------

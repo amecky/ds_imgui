@@ -294,6 +294,7 @@ namespace gui {
 		SpriteBatchBuffer* buffer;
 		std::vector<DrawCall> calls;
 		bool clicked;
+		ds::vec2 mousePos;
 		bool buttonPressed;
 		int keyInput[256];
 		int keys[32];
@@ -319,7 +320,8 @@ namespace gui {
 	// check if mouse cursor is inside box
 	// -------------------------------------------------------
 	static bool isCursorInside(const ds::vec2& p, const ds::vec2& dim) {
-		ds::vec2 mp = ds::getMousePosition();
+		//ds::vec2 mp = ds::getMousePosition();
+		ds::vec2 mp = _guiCtx->mousePos;
 		if (mp.x < (p.x - dim.x * 0.5f)) {
 			return false;
 		}
@@ -684,10 +686,13 @@ namespace gui {
 			addBox(p, width, 16,_guiCtx->settings.activeInputBoxColor);
 			ret = handleTextInput(true);
 			*v = static_cast<float>(atof(_guiCtx->inputText));
+			ds::vec2 textDim = textSize(_guiCtx->inputText);
 			ds::vec2 cp = p;
 			ds::vec2 cursorPos = limitedTextSize(_guiCtx->inputText, _guiCtx->caretPos);
-			cp.x = _guiCtx->currentPos.x + 2.0f + (width + 10.0f) * index + cursorPos.x + 10.0f;
-			addBox(cp, ds::vec2(2, 30.0f - 4.0f), ds::Color(192, 0, 192, 255));
+			cp.x += (width - textDim.x) * 0.5f + cursorPos.x - 2.0f;
+			cp.y -= 6.0f;
+			addBox(cp, ds::vec2(10.0f, 3.0f), ds::Color(192, 0, 192, 255));
+			p.x += (width - textDim.x) * 0.5f;
 			p.y -= 1.0f;
 			addText(p, _guiCtx->inputText, 0.0f);
 		}
@@ -711,15 +716,7 @@ namespace gui {
 		_guiCtx->currentPos = pos;
 		_guiCtx->size = ds::vec2(0.0f, 0.0f);
 		_guiCtx->grouping = false;
-		for (int i = 0; i < ds::getNumInputKeys(); ++i) {
-			const ds::InputKey& key = ds::getInputKey(i);
-			if (key.type == ds::IKT_ASCII) {
-				printf("IK-ASCII: %d %c\n", key.value, key.value);
-			}
-			else {
-				printf("IK-SYS: %d %c\n", key.value, key.value);
-			}
-		}
+		_guiCtx->mousePos = ds::getMousePosition();
 		if (_guiCtx->clicked) {
 			_guiCtx->clicked = false;
 		}
@@ -728,7 +725,7 @@ namespace gui {
 		}
 		else {
 			if (_guiCtx->buttonPressed) {
-				_guiCtx->clicked = true;
+				_guiCtx->clicked = true;				
 			}
 			_guiCtx->buttonPressed = false;
 		}
@@ -790,9 +787,10 @@ namespace gui {
 		ds::vec2 textDim = textSize(text);
 		p.x += (150.0f - textDim.x) * 0.5f;
 		addText(p, text, 0.0f);
-		dim.y = 30.0f;
+		dim.y = 20.0f;
+		ds::vec2 buttonPos = _guiCtx->currentPos;
 		moveForward(dim);
-		return isClicked(_guiCtx->currentPos, dim);
+		return isClicked(buttonPos, dim);
 	}
 
 	// --------------------------------------------------------

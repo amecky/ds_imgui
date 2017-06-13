@@ -550,6 +550,7 @@ namespace gui {
 		else {
 			_guiCtx->currentPos.y -= dim.y;
 			_guiCtx->size.y += dim.y;
+			_guiCtx->currentPos.x = _guiCtx->startPos.x;
 		}
 		++_guiCtx->currentGoupIndex;
 	}
@@ -782,14 +783,14 @@ namespace gui {
 	// --------------------------------------------------------
 	bool Button(const char* text) {
 		ds::vec2 p = _guiCtx->currentPos;
-		addBox(p, 150, 20, _guiCtx->settings.buttonColor);
-		ds::vec2 dim = ds::vec2(150, 20);
+		addBox(p, 120, 20, _guiCtx->settings.buttonColor);
+		ds::vec2 dim = ds::vec2(120, 20);
 		ds::vec2 textDim = textSize(text);
-		p.x += (150.0f - textDim.x) * 0.5f;
+		p.x += (120.0f - textDim.x) * 0.5f;
 		addText(p, text, 0.0f);
 		dim.y = 20.0f;
 		ds::vec2 buttonPos = _guiCtx->currentPos;
-		moveForward(dim);
+		moveForward(dim + ds::vec2(0.0f,_guiCtx->settings.lineSpacing));
 		return isClicked(buttonPos, dim);
 	}
 

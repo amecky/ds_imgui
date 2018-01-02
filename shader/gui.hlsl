@@ -12,13 +12,6 @@ struct GUIItem {
 
 StructuredBuffer<GUIItem> ItemsRO : register(t1);
 
-struct GSPS_INPUT {
-	float4 Pos : SV_POSITION;
-	float4 Tex : COLOR0;
-	float3 Size : NORMAL0;
-	float4 Color : COLOR1;
-};
-
 struct PS_Input {
 	float4 pos  : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
@@ -58,10 +51,7 @@ PS_Input VS_Main(uint id:SV_VERTEXID) {
 	sp.x -= screenDimension.x;
 	sp.y -= screenDimension.y;
 
-	sp.x *= sx;
-	sp.y *= sy;
-
-	vsOut.pos = mul(float4(sp.x, sp.y, 0.0, 1.0f), wvp);
+	vsOut.pos = mul(float4(sp.x + sx, sp.y + sy, 0.0, 1.0f), wvp);
 	vsOut.pos.z = 1.0;
 	vsOut.tex0 = t[vertexIndex];
 	vsOut.color = ItemsRO[itemIndex].color;
@@ -73,6 +63,5 @@ SamplerState colorSampler : register(s0);
 
 float4 PS_Main(PS_Input frag) : SV_TARGET{
 	float4 c = colorMap.Sample(colorSampler, frag.tex0) * frag.color;
-	//c.rgb *= c.a;
 	return c;
 }

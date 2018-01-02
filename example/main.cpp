@@ -31,8 +31,8 @@ struct TestSettings {
 // ---------------------------------------------------------------
 void initialize() {
 	ds::RenderSettings rs;
-	rs.width = 1024;
-	rs.height = 768;
+	rs.width = 1280;
+	rs.height = 720;
 	rs.title = "IMGUI Demo";
 	rs.clearColor = ds::Color(0.0f, 0.0f, 0.0f, 1.0f);
 	rs.multisampling = 4;
@@ -43,7 +43,7 @@ char* message = "Hello World";
 const char* ITEMS[] = { "First","Second","Third","Fourth" };
 const char* MENU_ONE_ITEMS[] = { "Open","Close","Three","Four" };
 // ---------------------------------------------------------------
-// show game over menu
+// show menu
 // ---------------------------------------------------------------
 int showDialog(TestSettings* settings) {
 	int ret = 0;
@@ -128,6 +128,16 @@ int showDialog(TestSettings* settings) {
 	return ret;
 }
 
+int showSimpleDialog(TestSettings* settings) {
+	int ret = 0;
+	p2i p(20, 750);
+	gui::start(&p, 500);
+	gui::begin("Basic elements", &settings->state);
+	gui::Button("Button");
+	gui::end();
+	return ret;
+}
+
 // ---------------------------------------------------------------
 // main method
 // ---------------------------------------------------------------
@@ -169,6 +179,8 @@ int main(int argc, char *argv[]) {
 		ds::begin();
 
 		int ret = showDialog(&settings);
+
+		//showSimpleDialog(&settings);
 
 		ds::end();
 	}
